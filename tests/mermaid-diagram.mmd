@@ -1,0 +1,15 @@
+graph TD
+    A[Support Case Opened] --> B[Initial Review]
+    B --> C{Priority?}
+    C -->|High| D[Immediate Response]
+    C -->|Medium| E[24 Hour Response]
+    C -->|Low| F[48 Hour Response]
+    D --> G[Notify Team Lead]
+    E --> H[Queue for Assignment]
+    F --> H
+    G --> I[Begin Resolution]
+    H --> I
+    I --> J{Resolved?}
+    J -->|Yes| K[Close Case]
+    J -->|No| L[Escalate]
+    L --> I
