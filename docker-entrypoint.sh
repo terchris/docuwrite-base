@@ -88,7 +88,8 @@ case "$TOOL" in
         exec pandoc "$@"
         ;;
     mmdc)
-        exec mmdc "$@"
+        # Always add the puppeteer config parameter for mmdc
+        exec mmdc -p "${PUPPETEER_CONFIG}" "$@"
         ;;
     marp)
         exec marp "$@"
