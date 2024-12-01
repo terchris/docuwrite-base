@@ -2,10 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
-    tags: [ 'v*' ]  # Added this to trigger on version tags
-  pull_request:
-    branches: [ "main" ]
+    tags: [ 'v*' ]  # Only trigger on version tags
 
 permissions:
   contents: read
@@ -32,12 +29,9 @@ jobs:
       with:
         images: ghcr.io/${{ github.repository }}
         tags: |
-          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=latest
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha,format=long
         labels: |
           org.opencontainers.image.title=DocuWrite Base
           org.opencontainers.image.description=Container for creating documents and presentations with pandoc, mermaid-cli, and marp-cli
@@ -46,6 +40,6 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        push: ${{ github.event_name != 'pull_request' }}
+        push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
