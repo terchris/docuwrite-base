@@ -45,7 +45,7 @@ RUN apt-get update \
 
 WORKDIR /usr/local/app
 
-RUN echo '{"dependencies": {"puppeteer": "23.9.0"}}' > package.json \
+RUN echo '{"dependencies": {"puppeteer": "23.9.0"}, "puppeteer": {"download": true}}' > package.json \
     && npm install --only=production \
     && npm install -g @mermaid-js/mermaid-cli@11.4.0 \
     && npm install -g @marp-team/marp-cli@4.0.3 \
