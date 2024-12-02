@@ -4,7 +4,7 @@
  * File: /usr/local/tests/puppeteer-test.js
  * 
  * Purpose:
- * Validates Puppeteer functionality in the DocuWrite container environment
+ * Validates Puppeteer functionality in the docuwrite-base container environment
  * by running a series of tests to verify browser automation capabilities.
  * Tests include page navigation, screenshot capture, PDF generation, and
  * DOM manipulation.

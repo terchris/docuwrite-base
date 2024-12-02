@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #######################################################################
-# DocuWrite Container Entrypoint Script
+# docuwrite-base Container Entrypoint Script
 #
 # File: /usr/local/bin/docker-entrypoint
 #
@@ -15,8 +15,8 @@ umask 0002
 
 # Function to show usage
 show_usage() {
-    echo "DocuWrite Container Usage:"
-    echo "docker run [docker-options] docuwrite [tool] [tool-options]"
+    echo "docuwrite-base Container Usage:"
+    echo "docker run [docker-options] docuwrite-base [tool] [tool-options]"
     echo ""
     echo "Available tools:"
     echo "  pandoc - Pandoc document converter"
@@ -30,30 +30,30 @@ show_usage() {
     echo ""
     echo "Interactive Shell Access:"
     echo "For Windows PowerShell:"
-    echo "  docker run --rm -it -v \"\${PWD}:/data\" docuwrite bash"
+    echo "  docker run --rm -it -v \"\${PWD}:/data\" docuwrite-base bash"
     echo ""
     echo "For Windows CMD:"
-    echo "  docker run --rm -it -v \"%CD%:/data\" docuwrite bash"
+    echo "  docker run --rm -it -v \"%CD%:/data\" docuwrite-base bash"
     echo ""
     echo "For macOS/Linux (bash/zsh):"
-    echo "  docker run --rm -it -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite bash"
+    echo "  docker run --rm -it -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base bash"
     echo ""
     echo "Tool Usage Examples:"
     echo ""
     echo "For Windows PowerShell:"
-    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite pandoc input.md -o output.pdf"
-    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite mmdc -i diagram.mmd -o diagram.png"
-    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite marp slides.md -o presentation.html"
+    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite-base pandoc input.md -o output.pdf"
+    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite-base mmdc -i diagram.mmd -o diagram.png"
+    echo "  docker run --rm -v \"\${PWD}:/data\" docuwrite-base marp slides.md -o presentation.html"
     echo ""
     echo "For Windows CMD:"
-    echo "  docker run --rm -v \"%CD%:/data\" docuwrite pandoc input.md -o output.pdf"
-    echo "  docker run --rm -v \"%CD%:/data\" docuwrite mmdc -i diagram.mmd -o diagram.png"
-    echo "  docker run --rm -v \"%CD%:/data\" docuwrite marp slides.md -o presentation.html"
+    echo "  docker run --rm -v \"%CD%:/data\" docuwrite-base pandoc input.md -o output.pdf"
+    echo "  docker run --rm -v \"%CD%:/data\" docuwrite-base mmdc -i diagram.mmd -o diagram.png"
+    echo "  docker run --rm -v \"%CD%:/data\" docuwrite-base marp slides.md -o presentation.html"
     echo ""
     echo "For macOS/Linux (bash/zsh):"
-    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite pandoc input.md -o output.pdf"
-    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite mmdc -i diagram.mmd -o diagram.png"
-    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite marp slides.md -o presentation.html"
+    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base pandoc input.md -o output.pdf"
+    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base mmdc -i diagram.mmd -o diagram.png"
+    echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base marp slides.md -o presentation.html"
     echo ""
     echo "Notes:"
     echo "  - Always use forward slashes (/) in file paths, even on Windows"
@@ -63,9 +63,9 @@ show_usage() {
     echo "  - Use -it flags when starting an interactive shell"
     echo ""
     echo "For tool-specific options, run:"
-    echo "  docker run --rm docuwrite pandoc --help"
-    echo "  docker run --rm docuwrite mmdc --help"
-    echo "  docker run --rm docuwrite marp --help"
+    echo "  docker run --rm docuwrite-base pandoc --help"
+    echo "  docker run --rm docuwrite-base mmdc --help"
+    echo "  docker run --rm docuwrite-base marp --help"
     exit 1
 }
 

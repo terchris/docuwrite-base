@@ -33,7 +33,7 @@ jobs:
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
         labels: |
-          org.opencontainers.image.title=DocuWrite Base
+          org.opencontainers.image.title=docuwrite-base Base
           org.opencontainers.image.description=Container for creating documents and presentations with pandoc, mermaid-cli, and marp-cli
 
     - name: Build and push Docker image

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #######################################################################
-# DocuWrite Integration Test Suite
+# docuwrite-base Integration Test Suite
 #
 # File: /usr/local/tests/test-install.sh
 #
 # Purpose:
 # Comprehensive test suite that validates the installation and functionality
-# of all components in the DocuWrite container environment. This script
+# of all components in the docuwrite-base container environment. This script
 # verifies that all document processing tools are correctly installed and
 # can produce the expected outputs.
 #
@@ -70,7 +70,7 @@
 # 1 - Test failure (specific error message will be displayed)
 #
 # Note:
-# This script is designed to run in the DocuWrite container environment
+# This script is designed to run in the docuwrite-base container environment
 # and assumes all paths and configurations match the container setup.
 #######################################################################
 
