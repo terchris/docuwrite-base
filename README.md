@@ -214,7 +214,7 @@ If something isn't working as expected, use the included test scripts to verify 
 To debug or inspect the environment:
 
 ```bash
-docker run --rm -it docuwrite-base bash
+docker run --rm -it -v ${PWD}:/data docuwrite-base bash
 ```
 
 You can manually run commands like `pandoc`, `mmdc`, or `marp` to identify any issues.
