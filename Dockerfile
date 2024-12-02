@@ -1,4 +1,4 @@
-FROM pandoc/latex:3.5-ubuntu
+FROM --platform=$TARGETPLATFORM pandoc/latex:3.5-ubuntu
 
 # Install Node.js
 RUN apt-get update \
@@ -9,12 +9,21 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y nodejs
 
-# Install Chrome
+# Install Chrome - with architecture-specific handling
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg \
+        && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/googlechrome-linux-keyring.gpg] https://dl-ssl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
+        && apt-get update \
+        && apt-get install -y google-chrome-stable; \
+    elif [ "$(uname -m)" = "aarch64" ]; then \
+        apt-get update \
+        && apt-get install -y chromium chromium-sandbox; \
+        ln -s /usr/bin/chromium /usr/bin/google-chrome-stable; \
+    fi
+
+# Install common fonts and dependencies
 RUN apt-get update \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg \
-    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/googlechrome-linux-keyring.gpg] https://dl-ssl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros fonts-kacst fonts-freefont-ttf libxss1 \
+    && apt-get install -y fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros fonts-kacst fonts-freefont-ttf libxss1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup environment variables
@@ -36,9 +45,9 @@ RUN npm install -g @mermaid-js/mermaid-cli --puppeteer-skip-download
 # Install marp-cli globally
 RUN npm install -g @marp-team/marp-cli
 
-# Create Puppeteer config file in a system location
+# Create Puppeteer config with architecture-specific settings
 RUN echo '{ \
-    "args": ["--no-sandbox", "--disable-setuid-sandbox"] \
+    "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"] \
     }' > /usr/local/etc/puppeteer-config.json
 
 # Copy test files

@@ -27,6 +27,10 @@ To use docuwrite-base Base, you need container runtime software installed on you
 
 Make sure you have one of these installed and properly configured before using docuwrite-base Base.
 
+## Architecture Support
+
+docuwrite-base supports both x86_64 (AMD64) and ARM64 architectures. The container images are built automatically for both architectures and published to GitHub Container Registry. Docker will automatically select the correct architecture for your system.
+
 ## Installation
 
 Pull the container from GitHub Container Registry:
@@ -38,6 +42,8 @@ docker pull ghcr.io/terchris/docuwrite-base:latest
 # Specific version
 docker pull ghcr.io/terchris/docuwrite-base:0.1.0
 ```
+
+The container will automatically use the correct version for your system's architecture (AMD64 or ARM64).
 
 After you have pulled the container we give it a tag so that it is easier to use.
 
@@ -229,14 +235,24 @@ You should see a list of all tests and get error messages if something is wrong.
 
 ## Development and Release Process
 
-### Build the repo locally
+### Local Development Build
 
+For local development and testing, you can build the container for your current architecture:
+
+```bash
+# Build for current architecture only
+docker build -t docuwrite-base .
+
+# Test after build
+docker run --rm docuwrite-base
+```
+
+Note: Local builds will only work for your current architecture. For multi-architecture builds, use the GitHub Actions release process.
 See the file [build.cmd](https://raw.githubusercontent.com/terchris/docuwrite-base/main/build.cmd)
 
 ### Release process
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
-The container is only built when creating a new release. Here's the process:
+The container is built automatically by GitHub Actions when creating a new release. The build process creates images for both AMD64 and ARM64 architectures. Here's the process:
 
 1. Make your changes and push them to main:
 
@@ -278,6 +294,8 @@ Following semantic versioning:
 - Increment MINOR (0.1.0 → 0.2.0) for new features
 - Increment MAJOR (0.1.0 → 1.0.0) for breaking changes
 - Use 0.x.x for initial development
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ## License
 
