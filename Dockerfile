@@ -1,8 +1,7 @@
-# Base image
-FROM --platform=$TARGETPLATFORM pandoc/latex:3.5-ubuntu
+FROM pandoc/latex:3.5-ubuntu
 
 LABEL maintainer="Terje Christensen" \
-      version="0.1.7" \
+      version="0.1.6" \
       description="Container for creating documents and presentations using Pandoc, Mermaid, and Marp" \
       source="https://github.com/terchris/docuwrite-base" \
       documentation="https://github.com/terchris/docuwrite-base#readme"
@@ -35,7 +34,6 @@ RUN apt-get update \
        libxfixes3 \
        libxrandr2 \
        libgbm1 \
-       libasound2 \
     && mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
