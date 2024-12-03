@@ -8,13 +8,21 @@
 # Purpose: 
 # Routes commands to appropriate document processing tools (Pandoc, 
 # Mermaid-CLI, or Marp) while maintaining their original command-line 
-# interfaces and allows interactive shell access.
+# interfaces and allows interactive shell access. Also provides access
+# to integration tests.
 #
 # Environment Variables Required:
 # - XVFB_DISPLAY: Virtual framebuffer display number (:99)
 # - DISPLAY: X display to use (matches XVFB_DISPLAY)
 # - PUPPETEER_CONFIG: Path to Puppeteer configuration
 # - NODE_PATH: Path to node modules
+#
+# Available Tools:
+# - pandoc: Document conversion
+# - mmdc: Mermaid diagram generation
+# - marp: Presentation creation
+# - test-install: Run integration tests
+# - bash: Interactive shell access
 #######################################################################
 
 # Set default permissions for output files
@@ -42,7 +50,7 @@ verify_xvfb() {
     fi
 }
 
-# Function to show usage [usage function content remains the same...]
+# Function to show usage
 show_usage() {
     echo "docuwrite-base Container Usage:"
     echo "docker run [docker-options] docuwrite-base [tool] [tool-options]"
@@ -51,6 +59,7 @@ show_usage() {
     echo "  pandoc - Pandoc document converter"
     echo "  mmdc   - Mermaid CLI diagram generator"
     echo "  marp   - Marp slide deck converter"
+    echo "  test-install - Run container integration tests"
     echo "  bash   - Start an interactive shell session"
     echo ""
     echo "File Access:"
@@ -83,6 +92,9 @@ show_usage() {
     echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base pandoc input.md -o output.pdf"
     echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base mmdc -i diagram.mmd -o diagram.png"
     echo "  docker run --rm -v \"\$(pwd):/data\" --user \$(id -u):\$(id -g) docuwrite-base marp slides.md -o presentation.html"
+    echo ""
+    echo "Run Integration Tests:"
+    echo "  docker run --rm docuwrite-base test-install"
     echo ""
     echo "Notes:"
     echo "  - Always use forward slashes (/) in file paths, even on Windows"
@@ -125,6 +137,9 @@ case "$TOOL" in
         ;;
     marp)
         exec marp "$@"
+        ;;
+    test-install)
+        exec test-install
         ;;
     bash)
         exec bash "$@"

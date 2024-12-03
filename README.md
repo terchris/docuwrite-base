@@ -1,14 +1,18 @@
 # docuwrite-base
 
-Container for creating documents and presentations. A swiss army knife for converting text and images to professional documents and presentations. Contains pandoc, mermaid-cli, marp-cli and maintains the functionality in these.
+A swiss army knife for converting text and images to professional documents and presentations. Contains pandoc, mermaid-cli, marp-cli, Puppeteer, Firefox and maintains the functionality in these. Works on AMD64 and ARM64. (Mac ARM CPU and on X86 CPU for Windows and Linux)
+
+![DocuWrite Logo](tests/docuwrite-logo-min.png)
 
 [docuwrite-base](https://github.com/terchris/docuwrite-base) is a lightweight, containerized base for generating documentation from Markdown files. It integrates three powerful tools:
 
 1. [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli): Create PNG or SVG diagrams from Mermaid.js code blocks.
 2. [Pandoc CLI](https://github.com/pandoc/dockerfiles): Convert Markdown into PDFs, Word documents, or other formats.
 3. [Marp CLI](https://github.com/marp-team/marp-cli): Generate professional PDF or PowerPoint slide decks from Markdown.
+4. [Puppeteer](https://github.com/puppeteer/puppeteer): Create PDFs from HTML.
+5. [Firefox](https://www.mozilla.org/en-US/firefox/): Create PDFs from HTML.
 
-Think about this image as your swiss army knife for converting text and images to professional documents and presentations. Refer to the [Pandoc website](https://pandoc.org/), [Mermaid website](https://mermaid.js.org/) and [Marp](https://marp.app/) for full howtos.
+Think about this image as your swiss army knife for converting text and images to professional documents and presentations. Refer to the [Pandoc website](https://pandoc.org/), [Mermaid website](https://mermaid.js.org/), [Marp](https://marp.app/) and [Puppeteer](https://github.com/puppeteer/puppeteer) for full howtos.
 
 ## Features
 
@@ -69,6 +73,7 @@ Available tools:
   pandoc - Pandoc document converter
   mmdc   - Mermaid CLI diagram generator
   marp   - Marp slide deck converter
+  test-install - Run container integration tests
   bash   - Start an interactive shell session
 
 File Access:
@@ -102,12 +107,14 @@ For macOS/Linux (bash/zsh):
   docker run --rm -v "$(pwd):/data" --user $(id -u):$(id -g) docuwrite-base mmdc -i diagram.mmd -o diagram.png
   docker run --rm -v "$(pwd):/data" --user $(id -u):$(id -g) docuwrite-base marp slides.md -o presentation.html
 
+Run Integration Tests:
+  docker run --rm docuwrite-base test-install
+
 Notes:
   - Always use forward slashes (/) in file paths, even on Windows
   - Files must be in the current directory or its subdirectories
   - Windows users: Run from a directory where you have write permissions
   - macOS/Linux users: The --user flag ensures correct file ownership
-  - Use -it flags when starting an interactive shell
 
 For tool-specific options, run:
   docker run --rm docuwrite-base pandoc --help
@@ -181,7 +188,7 @@ In the quick start we assume you are on windows and use powershell. If you are o
    - **Convert Markdown that contains mermaid figure to markdown with png image using mermaid**:
 
      ```bash
-     docker run --rm -v ${PWD}:/data docuwrite-base mmdc -i markdown-diagram.md -o markdown-diagram-image.md --pdfFit -b transparent --outputFormat png     
+     docker run --rm -v ${PWD}:/data docuwrite-base mmdc -i markdown-diagram.md -o markdown-diagram-image.md --pdfFit --outputFormat png     
      dir markdown-diagram-image*
      ```
 
@@ -215,6 +222,16 @@ Write your documentation in Markdown, using Mermaid diagrams and presentation sy
 
 If something isn't working as expected, use the included test scripts to verify your setup:
 
+### Self test
+
+The self test is a script that tests the functionality of the tools in the container.
+
+```bash
+docker run --rm docuwrite-base test-install
+```
+
+A output example is listed in the file [trouble-notes.md](trouble-notes.md)
+
 ### Debugging Inside the Container
 
 To debug or inspect the environment:
@@ -231,7 +248,7 @@ There is also a script that tests the functionality of the tools in the containe
 test-install
 ```
 
-You should see a list of all tests and get error messages if something is wrong.
+You should see a list of all tests and get error messages if something is wrong. You can find more info about trouble shooting in the file [trouble-notes.md](trouble-notes.md)
 
 ## Development and Release Process
 
