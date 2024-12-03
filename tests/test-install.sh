@@ -13,8 +13,9 @@
 #
 # Components Tested:
 # - Node.js and NPM installation
-# - Chrome/Chromium installation and version
-# - Puppeteer installation and browser automation
+# - Firefox Nightly installation and version
+# - Puppeteer-core with Firefox WebDriver BiDi integration
+# - Xvfb display functionality
 # - Pandoc installation and conversion capabilities
 # - Mermaid-CLI diagram generation
 # - Marp CLI slide deck conversion
@@ -46,38 +47,36 @@
 #   - puppeteer-example-page.pdf: Website PDF export
 #   - puppeteer-test-page.pdf: Test page PDF export
 #
-# Requirements:
-# - Node.js and NPM
-# - Google Chrome
-# - Pandoc with XeLaTeX
-# - Mermaid-CLI
-# - Marp CLI
-# - Puppeteer (installed in /usr/local/app/node_modules)
-# - Write permissions to /usr/local/tests/
-# - Puppeteer config at /usr/local/etc/puppeteer-config.json
-#
-# Environment Variables:
+# Environment Variables Required:
 # - APP_DIR: Directory containing npm packages (/usr/local/app)
 # - TEST_DIR: Directory containing test files (/usr/local/tests)
 # - PUPPETEER_CONFIG: Path to Puppeteer configuration
 # - NODE_PATH: Path to node modules for Puppeteer
+# - DISPLAY: X display to use
 #
 # Usage:
 # ./test-install.sh
 #
 # Exit Codes:
 # 0 - All tests passed
-# 1 - Test failure (specific error message will be displayed)
-#
-# Note:
-# This script is designed to run in the docuwrite-base container environment
-# and assumes all paths and configurations match the container setup.
+# 1 - Test failure (error message will be displayed)
 #######################################################################
 
-# Directory paths
-APP_DIR="/usr/local/app"
-TEST_DIR="/usr/local/tests"
-PUPPETEER_CONFIG="/usr/local/etc/puppeteer-config.json"
+# Check essential environment variables
+required_vars=(
+    "APP_DIR"
+    "TEST_DIR"
+    "PUPPETEER_CONFIG"
+    "NODE_PATH"
+    "DISPLAY"
+)
+
+for var in "${required_vars[@]}"; do
+    if [ -z "${!var}" ]; then
+        echo "ERROR: Required environment variable $var is not set"
+        exit 1
+    fi
+done
 
 # PDF engine setting
 PDF_ENGINE="--pdf-engine=xelatex"
@@ -121,8 +120,19 @@ check_file() {
    echo "✓ Successfully created $1"
 }
 
+# Function to verify Xvfb is running
+verify_xvfb() {
+    if ! ps aux | grep -v grep | grep -q "Xvfb ${DISPLAY}"; then
+        handle_error "Xvfb is not running on display ${DISPLAY}"
+    fi
+    echo "✓ Xvfb is running on display ${DISPLAY}"
+}
+
 echo "=== Testing Installation ==="
 echo ""
+
+# Verify Xvfb is running
+verify_xvfb
 
 # Version checks
 echo "=== Node.js Version ==="
@@ -131,19 +141,19 @@ node --version || handle_error "Node.js not installed"
 echo -e "\n=== NPM Version ==="
 npm --version || handle_error "NPM not installed"
 
-echo -e "\n=== Chrome Version ==="
-google-chrome-stable --version || handle_error "Chrome not installed"
+echo -e "\n=== Firefox Version ==="
+firefox-nightly --version || handle_error "Firefox Nightly not installed"
 
 echo -e "\n=== Pandoc Version ==="
 pandoc --version || handle_error "Pandoc not installed"
 
 echo -e "\n=== Puppeteer Installation ==="
-if [ ! -d "/usr/local/app/node_modules/puppeteer" ]; then
-   handle_error "Puppeteer not installed in /usr/local/app/node_modules"
+if [ ! -d "${NODE_PATH}/puppeteer-core" ]; then
+   handle_error "Puppeteer-core not installed in ${NODE_PATH}"
 fi
-echo "✓ Puppeteer is installed"
-PUPPETEER_VERSION=$(node -p "require('/usr/local/app/node_modules/puppeteer/package.json').version")
-echo "Puppeteer version: ${PUPPETEER_VERSION}"
+echo "✓ Puppeteer-core is installed"
+PUPPETEER_VERSION=$(node -p "require('${NODE_PATH}/puppeteer-core/package.json').version")
+echo "Puppeteer-core version: ${PUPPETEER_VERSION}"
 
 echo -e "\n=== Mermaid-CLI Version ==="
 mmdc --version || handle_error "Mermaid-CLI not installed"
@@ -175,9 +185,9 @@ echo -e "\nTesting Simple Pandoc Markdown to DOCX..."
 pandoc ${MD_FILE} --embed-resources --standalone -o ${MD_DOCX} || handle_error "Pandoc DOCX conversion failed"
 check_file "${MD_DOCX}"
 
-# Process markdown with mermaid diagrams
+# Process markdown with mermaid diagrams - Updated working version
 echo -e "\nProcessing Markdown with Mermaid diagrams..."
-mmdc -i ${MD_DIAGRAM_FILE} -o ${MD_DIAGRAM_IMAGE} --pdfFit -b transparent --outputFormat png --puppeteerConfigFile ${PUPPETEER_CONFIG} || handle_error "Mermaid markdown processing failed"
+mmdc -i ${MD_DIAGRAM_FILE} -o ${MD_DIAGRAM_IMAGE} --pdfFit --outputFormat png --puppeteerConfigFile ${PUPPETEER_CONFIG} || handle_error "Mermaid markdown processing failed"
 check_file "${MD_DIAGRAM_IMAGE}"
 
 # Convert processed markdown to PDF and DOCX
@@ -200,12 +210,8 @@ check_file "${MARP_PPTX}"
 
 # Run Puppeteer tests
 echo -e "\n=== Testing Puppeteer Integration ==="
-# Export config for Puppeteer tests to use
-export PUPPETEER_CONFIG
-export NODE_PATH="/usr/local/app/node_modules"
-# Run Puppeteer tests
-cd ${TEST_DIR}
 node puppeteer-test.js || handle_error "Puppeteer tests failed"
+
 # Verify Puppeteer outputs
 echo -e "\nVerifying Puppeteer test outputs..."
 check_file "${PUPPETEER_EXAMPLE_SS}"

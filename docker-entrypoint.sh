@@ -5,15 +5,44 @@
 #
 # File: /usr/local/bin/docker-entrypoint
 #
-# Purpose: Routes commands to appropriate document processing tools
-# (Pandoc, Mermaid-CLI, or Marp) while maintaining their original
-# command-line interfaces and allows interactive shell access.
+# Purpose: 
+# Routes commands to appropriate document processing tools (Pandoc, 
+# Mermaid-CLI, or Marp) while maintaining their original command-line 
+# interfaces and allows interactive shell access.
+#
+# Environment Variables Required:
+# - XVFB_DISPLAY: Virtual framebuffer display number (:99)
+# - DISPLAY: X display to use (matches XVFB_DISPLAY)
+# - PUPPETEER_CONFIG: Path to Puppeteer configuration
+# - NODE_PATH: Path to node modules
 #######################################################################
 
 # Set default permissions for output files
 umask 0002
 
-# Function to show usage
+# Check essential environment variables
+required_vars=(
+    "DISPLAY"
+    "PUPPETEER_CONFIG"
+    "NODE_PATH"
+)
+
+for var in "${required_vars[@]}"; do
+    if [ -z "${!var}" ]; then
+        echo "ERROR: Required environment variable $var is not set"
+        exit 1
+    fi
+done
+
+# Function to verify Xvfb is running
+verify_xvfb() {
+    if ! ps aux | grep -v grep | grep -q "Xvfb ${DISPLAY}"; then
+        echo "ERROR: Xvfb is not running on display ${DISPLAY}"
+        exit 1
+    fi
+}
+
+# Function to show usage [usage function content remains the same...]
 show_usage() {
     echo "docuwrite-base Container Usage:"
     echo "docker run [docker-options] docuwrite-base [tool] [tool-options]"
@@ -60,7 +89,6 @@ show_usage() {
     echo "  - Files must be in the current directory or its subdirectories"
     echo "  - Windows users: Run from a directory where you have write permissions"
     echo "  - macOS/Linux users: The --user flag ensures correct file ownership"
-    echo "  - Use -it flags when starting an interactive shell"
     echo ""
     echo "For tool-specific options, run:"
     echo "  docker run --rm docuwrite-base pandoc --help"
@@ -78,9 +106,13 @@ fi
 TOOL="$1"
 shift
 
-# Export common environment variables needed by the tools
-export PUPPETEER_CONFIG="/usr/local/etc/puppeteer-config.json"
-export NODE_PATH="/usr/local/app/node_modules:$NODE_PATH"
+# Verify Xvfb is running
+verify_xvfb
+
+# Export only necessary environment variables
+export DISPLAY
+export PUPPETEER_CONFIG
+export NODE_PATH
 
 # Execute the appropriate tool based on the first argument
 case "$TOOL" in
