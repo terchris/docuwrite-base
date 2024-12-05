@@ -24,6 +24,10 @@ ENV APP_DIR=/usr/local/app \
     NODE_PATH=/usr/local/app/node_modules \
     PUPPETEER_CONFIG=/usr/local/etc/puppeteer-config.json
 
+# Create vscode user and group
+RUN groupadd --gid 1000 vscode \
+    && useradd --uid 1000 --gid vscode --shell /bin/bash --create-home vscode
+
 # Package installation explanation:
 # Core system utilities:
 #   ca-certificates: Required for HTTPS connections
