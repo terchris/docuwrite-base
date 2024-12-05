@@ -1,5 +1,6 @@
 FROM pandoc/latex:3.5-ubuntu
 # Based on Ubuntu 22.04 LTS (Jammy Jellyfish)
+# the user ubuntu is the one we use
 
 LABEL maintainer="Terje Christensen" \
       version="0.1.7" \
@@ -23,10 +24,6 @@ ENV APP_DIR=/usr/local/app \
     TEST_DIR=/usr/local/tests \
     NODE_PATH=/usr/local/app/node_modules \
     PUPPETEER_CONFIG=/usr/local/etc/puppeteer-config.json
-
-# Create vscode user and group
-RUN groupadd --gid 1000 vscode \
-    && useradd --uid 1000 --gid vscode --shell /bin/bash --create-home vscode
 
 # Package installation explanation:
 # Core system utilities:
